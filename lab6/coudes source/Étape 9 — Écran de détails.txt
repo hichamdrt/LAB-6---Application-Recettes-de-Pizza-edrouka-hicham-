@@ -1,0 +1,145 @@
+Layout : res/layout/activity_pizza_detail.xml
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Image -->
+        <ImageView
+            android:id="@+id/img"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:scaleType="centerCrop"
+            android:contentDescription="Pizza Image"/>
+
+        <!-- Title -->
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:textSize="20sp"
+            android:textColor="#000"
+            android:layout_marginTop="12dp"/>
+
+        <!-- Meta info -->
+        <TextView
+            android:id="@+id/meta"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="#666"
+            android:textSize="14sp"
+            android:layout_marginTop="4dp"/>
+
+        <!-- Ingredients -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Ingrédients :"
+            android:textStyle="bold"
+            android:textColor="#000"
+            android:layout_marginTop="12dp"/>
+
+        <TextView
+            android:id="@+id/ingredients"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="#333"
+            android:lineSpacingExtra="2dp"
+            android:layout_marginTop="4dp"/>
+
+        <!-- Description -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Description :"
+            android:textStyle="bold"
+            android:textColor="#000"
+            android:layout_marginTop="12dp"/>
+
+        <TextView
+            android:id="@+id/desc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="#333"
+            android:lineSpacingExtra="2dp"
+            android:layout_marginTop="4dp"/>
+
+        <!-- Steps -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Étapes :"
+            android:textStyle="bold"
+            android:textColor="#000"
+            android:layout_marginTop="12dp"/>
+
+        <TextView
+            android:id="@+id/steps"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="#333"
+            android:lineSpacingExtra="2dp"
+            android:layout_marginTop="4dp"/>
+
+    </LinearLayout>
+</ScrollView>
+
+Code : ui/PizzaDetailActivity.java
+package com.example.pizzarecipes.ui;
+
+import android.os.Bundle;
+import android.widget.ImageView;
+import android.widget.TextView;
+import androidx.appcompat.app.AppCompatActivity;
+import com.example.pizzarecipes.R;
+import com.example.pizzarecipes.classes.Produit;
+import com.example.pizzarecipes.service.ProduitService;
+
+public class PizzaDetailActivity extends AppCompatActivity {
+
+    private ImageView img;
+    private TextView title, meta, ingredients, desc, steps;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_pizza_detail);
+
+        // 🔹 bind views
+        img = findViewById(R.id.img);
+        title = findViewById(R.id.title);
+        meta = findViewById(R.id.meta);
+        ingredients = findViewById(R.id.ingredients);
+        desc = findViewById(R.id.desc);
+        steps = findViewById(R.id.steps);
+
+        // 🔹 get pizza id from intent
+        long id = getIntent().getLongExtra("pizza_id", -1);
+
+        // 🔹 find produit
+        Produit p = ProduitService.getInstance().findById(id);
+
+        // 🔹 afficher info
+        if (p != null) {
+            img.setImageResource(p.getImageRes());
+            title.setText(p.getNom());
+            meta.setText(p.getDuree() + " • " + p.getPrix() + " €");
+            ingredients.setText(p.getIngredients());
+            desc.setText(p.getDescription());
+            steps.setText(p.getEtapes());
+        } else {
+            title.setText("Pizza introuvable !");
+            meta.setText("");
+            ingredients.setText("");
+            desc.setText("");
+            steps.setText("");
+        }
+    }
+}

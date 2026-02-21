@@ -1,0 +1,52 @@
+Code : ui/ListPizzaActivity.java
+package com.example.pizzarecipes.ui;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.widget.ListView;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.pizzarecipes.R;
+import com.example.pizzarecipes.adapter.PizzaAdapter;
+import com.example.pizzarecipes.classes.Produit;
+import com.example.pizzarecipes.service.ProduitService;
+
+import java.util.List;
+
+public class ListPizzaActivity extends AppCompatActivity {
+
+    private ListView lv;
+    private PizzaAdapter adapter;
+    private List<Produit> pizzas;
+
+    @Override
+    protected void onCreate(Bundle b) {
+        super.onCreate(b);
+        setContentView(R.layout.activity_list_pizza);
+
+        // 1️⃣ init views
+        lv = findViewById(R.id.lvPizzas);
+
+        // 2️⃣ get data
+        pizzas = ProduitService.getInstance().findAll();
+
+        // 3️⃣ set adapter
+        adapter = new PizzaAdapter(this, pizzas);
+        lv.setAdapter(adapter);
+
+        // 4️⃣ click listener
+        lv.setOnItemClickListener((parent, view, position, id) -> {
+            Intent it = new Intent(ListPizzaActivity.this, PizzaDetailActivity.class);
+            it.putExtra("pizza_id", id);
+            startActivity(it);
+        });
+    }
+
+    // 🔄 إذا رجعنا من detail وتبدلات البيانات
+    @Override
+    protected void onResume() {
+        super.onResume();
+        adapter.notifyDataSetChanged();
+    }
+}
